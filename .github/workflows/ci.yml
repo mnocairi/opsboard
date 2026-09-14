@@ -18,11 +18,11 @@ jobs:
       postgres:
         image: postgres:16
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: password
-          POSTGRES_DB: opsboard
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: test
         ports:
-          - 5432:5432
+          - 5433:5432
         options: >-
           --health-cmd="pg_isready -U postgres -d opsboard"
           --health-interval=5s
