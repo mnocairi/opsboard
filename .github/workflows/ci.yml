@@ -84,7 +84,7 @@ jobs:
           export TOKEN
 
           python -c 'import os,json,base64; t=os.environ["TOKEN"]; p=t.split(".")[1]; p += "="*(-len(p)%4); c=json.loads(base64.urlsafe_b64decode(p)); print("sub:", c.get("sub")); print("aud:", c.get("aud"))'
-          
+
       - name: Configure AWS credentials
         if: github.event_name == 'push' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main')
         uses: aws-actions/configure-aws-credentials@v5
@@ -113,6 +113,12 @@ jobs:
           aws eks update-kubeconfig \
             --region ${{ secrets.AWS_REGION }} \
             --name opsboard
+
+      - name: Test EKS access
+        run: |
+          aws sts get-caller-identity
+          kubectl config current-context
+          kubectl get nodes
 
       - name: Deploy to EKS
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
