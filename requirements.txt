@@ -4,3 +4,6 @@ sqlalchemy
 psycopg2-binary
 pytest
 httpx
+ruff
+pytest-cov
+pip-audit
