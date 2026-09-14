@@ -115,6 +115,7 @@ jobs:
             --name opsboard
 
       - name: Test EKS access
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           aws sts get-caller-identity
           kubectl config current-context
