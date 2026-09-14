@@ -16,13 +16,13 @@ def health():
     return {"status": "ok"}
 
 
-
 @app.post("/incidents", response_model=IncidentResponse)
 def create_incident(
     incident: IncidentCreate,
     db: Session = Depends(get_db),
 ):
     db_incident = Incident(**incident.model_dump())
+
     db.add(db_incident)
     db.commit()
     db.refresh(db_incident)
@@ -40,14 +40,51 @@ def get_incident(
     incident_id: int,
     db: Session = Depends(get_db),
 ):
-    incident = db.query(Incident).filter(
-        Incident.id == incident_id
-    ).first()
+    incident = db.query(Incident).filter(Incident.id == incident_id).first()
 
     if not incident:
         raise HTTPException(status_code=404, detail="Incident not found")
 
     return incident
+
+
+@app.put("/incidents/{incident_id}", response_model=IncidentResponse)
+def update_incident(
+    incident_id: int,
+    incident_data: IncidentCreate,
+    db: Session = Depends(get_db),
+):
+    incident = db.query(Incident).filter(Incident.id == incident_id).first()
+
+    if not incident:
+        raise HTTPException(status_code=404, detail="Incident not found")
+
+    incident.title = incident_data.title
+    incident.description = incident_data.description
+    incident.severity = incident_data.severity
+    incident.status = incident_data.status
+
+    db.commit()
+    db.refresh(incident)
+
+    return incident
+
+
+@app.delete("/incidents/{incident_id}")
+def delete_incident(
+    incident_id: int,
+    db: Session = Depends(get_db),
+):
+    incident = db.query(Incident).filter(Incident.id == incident_id).first()
+
+    if not incident:
+        raise HTTPException(status_code=404, detail="Incident not found")
+
+    db.delete(incident)
+    db.commit()
+
+    return {"message": "Incident deleted"}
+
 
 """ if __name__ == "__main__":
     import uvicorn

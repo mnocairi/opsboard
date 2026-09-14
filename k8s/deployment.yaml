@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opsboard
+  labels:
+    app: opsboard
+spec:
+  replicas: 3
+
+  selector:
+    matchLabels:
+      app: opsboard
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+
+  template:
+    metadata:
+      labels:
+        app: opsboard
+
+    spec:
+      containers:
+        - name: opsboard
+          image: 820298842689.dkr.ecr.eu-west-3.amazonaws.com/opsboard:968ba8f8184b817cc4823937424e88b119385ba5
+
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: opsboard-secret
+                  key: DATABASE_URL
+
+          ports:
+            - containerPort: 8000
+
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 20
