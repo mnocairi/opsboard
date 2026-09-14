@@ -5,14 +5,16 @@ from app.database import Base, engine, get_db
 from app.models import Incident
 from app.schemas import IncidentCreate, IncidentResponse
 
-app = FastAPI(title="OpsBoard")
+app = FastAPI(title="Ops DashBoard API")
 
-Base.metadata.create_all(bind=engine)
-
+@app.on_event("startup")
+def startup():
+    Base.metadata.create_all(bind=engine)
 
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
 
 
 @app.post("/incidents", response_model=IncidentResponse)
