@@ -22,7 +22,7 @@ data "aws_iam_policy_document" "github_oidc_assume_role" {
       variable = "token.actions.githubusercontent.com:sub"
       values = [
         "repo:mnocairi@7888479/opsboard@1367503527:ref:refs/heads/main",
-        "repo:mnocairi@7888479/opsboard@1367503527:ref:refs/heads/develop"
+        "repo:mnocairi/opsboard:ref:refs/heads/develop"
       ]
     }
 
