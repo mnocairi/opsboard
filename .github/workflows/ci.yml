@@ -71,6 +71,15 @@ jobs:
           echo "Ref: $GITHUB_REF"
           echo "SHA: $GITHUB_SHA"
 
+      - name: Debug OIDC token
+        id: oidc
+        env:
+          ACTIONS_ID_TOKEN_REQUEST_URL: ${{ env.ACTIONS_ID_TOKEN_REQUEST_URL }}
+          ACTIONS_ID_TOKEN_REQUEST_TOKEN: ${{ env.ACTIONS_ID_TOKEN_REQUEST_TOKEN }}
+        run: |
+          echo "OIDC URL is available: ${ACTIONS_ID_TOKEN_REQUEST_URL:+yes}"
+          echo "OIDC token request token is available: ${ACTIONS_ID_TOKEN_REQUEST_TOKEN:+yes}"
+
       - name: Configure AWS credentials
         if: github.event_name == 'push' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main')
         uses: aws-actions/configure-aws-credentials@v5
